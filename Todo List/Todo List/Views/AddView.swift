@@ -9,8 +9,11 @@ import SwiftUI
 
 struct AddView: View {
     
+    @Environment(ListViewModel.self) private var listViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var textFieldText: String = ""
+    @State private var alertTitle: String = ""
+    @State private var showAlert: Bool = false
     
     var body: some View {
         ScrollView {
@@ -22,8 +25,7 @@ struct AddView: View {
                     .cornerRadius(10)
                 
                 Button {
-                    textFieldText = ""
-                    dismiss()
+                    saveButtonPressed()
                 } label: {
                     Text("Save")
                         .font(.headline)
@@ -39,11 +41,36 @@ struct AddView: View {
             .padding(14)
         }
         .navigationTitle("Add an item ✏")
+        .alert(isPresented: $showAlert) {
+            getAlert()
+        }
+    }
+    
+    private func saveButtonPressed() {
+        if textIsAppropriate() {
+            listViewModel.addItem(title: textFieldText)
+            textFieldText = ""
+            dismiss()
+        }
+    }
+    
+    private func textIsAppropriate() -> Bool {
+        if textFieldText.count < 3 {
+            alertTitle = "Your new todo item must be at least 3 characters long!!! 😨😰😥"
+            showAlert.toggle()
+           return false
+        }
+        return true
+    }
+    
+    private func getAlert() -> Alert {
+        return Alert(title: Text(alertTitle))
     }
 }
 
 #Preview {
     NavigationStack {
         AddView()
+            .environment(ListViewModel())
     }
 }

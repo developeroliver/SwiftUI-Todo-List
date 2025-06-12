@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 /*
  MVVM Architecture
@@ -19,10 +20,14 @@ import SwiftUI
 
 @main
 struct Todo_ListApp: App {
+    
+    @State private var listViewModel: ListViewModel = ListViewModel()
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 ListView()
+                    .environment(listViewModel)
             }
         }
     }
